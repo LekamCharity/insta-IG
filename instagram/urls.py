@@ -20,8 +20,8 @@ from django.conf.urls import url
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    url(r'',include('instaphotos.urls')),
-    url(r'^accounts/', include('django.contrib.auth.urls')),
-    url(r'^accounts/register/',RegistrationView.as_view(success_url='/accounts/login/'),name='django_registration_register'),
-    url(r'^accounts/', include('django_registration.backends.one_step.urls')),
+    path('',include('instaphotos.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/register/',RegistrationView.as_view(success_url='/accounts/login/'),name='django_registration_register'),
+    path('accounts/', include('django_registration.backends.one_step.urls')),
 ]
