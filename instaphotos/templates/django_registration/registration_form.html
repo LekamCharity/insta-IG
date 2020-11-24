@@ -6,7 +6,7 @@
     <div class="col-md-4"></div>
     <div class="col-md-4">
       {% if form.errors %}
-        <p> Some Information Might be Incorrect </p>
+        <p> Entry Failed. </p>
       {% endif %}
       <div class="panel panel-default">
 
@@ -23,13 +23,9 @@
             </div>
 
             <input type="hidden" name="next" value="{{next}}">
-
           </form>
-
         </div>
-
       </div>
-
     </div>
     <!-- empty div -->
     <div class="col-md-4"></div>
