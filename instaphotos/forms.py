@@ -6,6 +6,7 @@ class UpdateProfile(forms.ModelForm):
     class Meta:
         model =Profile
         exclude = ['user']
+        
 
 class PostImageForm(forms.ModelForm):
     """Enabling the user to upload images"""
