@@ -1,4 +1,4 @@
-# Album 
+# insta-IG
 ## Author  
   
 [LekamCharity](https://github.com/LekamCharity/insta-IG.git)  
