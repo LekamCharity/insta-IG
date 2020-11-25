@@ -12,6 +12,9 @@ This is a web application for instagram where users can upload photos and follow
 * Search for different categories   
 * Copy a link to the photo to share with my friends.  
 * View photos based on the location they were taken.  
+
+## Live Link
+https://instaig.herokuapp.com/ 
   
 ## Setup and Installation  
 To get the project .......  
