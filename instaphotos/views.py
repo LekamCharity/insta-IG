@@ -1,14 +1,16 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
 from .models import Profile, Image, Comments
 from .forms import UpdateProfile, PostImageForm, CommentForm
 from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+
+
 @login_required(login_url='/accounts/login/')
 def index(request):
     pics = Image.get_all()
-    return render(request, 'index.html')
+    return render(request, 'index.html', {'pics': pics})
 
 
 @login_required(login_url='/accounts/login/')
@@ -41,8 +43,8 @@ def profile(request):
         profile_form = UpdateProfile()
         upload_form = PostImageForm()
         comment_form = CommentForm
-    return render(request, 'registration/profile.html', {'user': user, 'profile': profile, 'pics': pics, 'profile_form': profile_form,
-                                            'upload_form': upload_form, 'coment_form': comment_form})
+    return render(request, 'profile.html', {'user': user, 'profile': profile, 'pics': pics, 'profile_form': profile_form,
+                                                         'upload_form': upload_form, 'coment_form': comment_form})
 
 
 @login_required(login_url='/accounts/login/')
@@ -58,6 +60,7 @@ def search_results(request):
     else:
         message = "You haven't searched for any term"
         return render(request, 'search.html', {'message': message})
+
 
 @login_required(login_url='/accounts/login/')
 def single_pic(request, img):
@@ -76,4 +79,3 @@ def single_pic(request, img):
         comment_form = CommentForm()
 
     return render(request, 'picture.html', {'comment_form': comment_form, 'pic': picture, 'user': user, 'comments': comments})
-
