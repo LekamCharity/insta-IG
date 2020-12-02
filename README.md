@@ -6,6 +6,7 @@
 # Description  
 This is a web application for instagram where users can upload photos and follow other people.
 
+
 ## User Story  
   
 * View different photos that interest them  
