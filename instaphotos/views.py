@@ -1,81 +1,129 @@
 from django.shortcuts import render, redirect
-from .models import Profile, Image, Comments
-from .forms import UpdateProfile, PostImageForm, CommentForm
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse
+from .models import Profile, Post
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from .forms import SignUpForm, NewPostForm
+from django.contrib.auth.models import User
+from .forms import Post, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
-
-
 @login_required(login_url='/accounts/login/')
-def index(request):
-    pics = Image.get_all()
-    return render(request, 'index.html', {'pics': pics})
+def home(request):
+    posts = Post.all_posts()
+    json_posts = []
+    for post in posts:
+        pic = Profile.objects.filter(user=post.user.id).first()
+        if pic:
+            pic = pic.profile_pic.url
+        else:
+            pic =''
+        obj = dict(
+            image=post.image.url,
+            author=post.user.username,
+            avatar=pic,
+            name=post.title,
+            caption=post.caption
+            # likes = post.likes
+
+        )
+        json_posts.append(obj)
+    return render(request, 'home.html', {"posts": json_posts})
 
 
-@login_required(login_url='/accounts/login/')
 def profile(request):
-    user = request.user
-    profiles = Profile.get_user(user.id)
-    pics = Image.get_by_user(user.id)
-    if profiles:
-        profile = profiles[len(profiles)-1]
-    else:
-        profile = profiles
-
     if request.method == 'POST':
-        profile_form = UpdateProfile(request.POST, request.FILES)
-        upload_form = PostImageForm(request.POST, request.FILES)
-        comment_form = CommentForm(request.POST)
-        if profile_form.is_valid():
-            if Profile.get_user(user.id):
-                deleter = Profile.get_user(user.id)
-                deleter.delete()
-            profile = profile_form.save(commit=False)
-            profile.user = user
-            profile.save_profile()
-            return HttpResponseRedirect('/profile')
-        if upload_form.is_valid():
-            image = upload_form.save(commit=False)
-            image.user = user
-            image.save_image()
-    else:
-        profile_form = UpdateProfile()
-        upload_form = PostImageForm()
-        comment_form = CommentForm
-    return render(request, 'profile.html', {'user': user, 'profile': profile, 'pics': pics, 'profile_form': profile_form,
-                                                         'upload_form': upload_form, 'coment_form': comment_form})
 
+        user_form = UserUpdateForm(request.POST, instance=request.user)
+        profile_form = ProfileUpdateForm(
+            request.POST, request.FILES, instance=request.user)
 
-@login_required(login_url='/accounts/login/')
-def search_results(request):
-    if 'search' in request.GET and request.GET['search']:
-        search_term = request.GET.get('search')
-        search_pics = Image.search_image(search_term)
-        search_prof = Profile.search_profiles(search_term)
-        message = f'{search_term}'
+        if  profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
 
-        return render(request, 'search.html', {'message': message, 'pics': search_pics, 'profiles': search_prof})
+            return redirect('home')
 
     else:
-        message = "You haven't searched for any term"
-        return render(request, 'search.html', {'message': message})
+        
+        profile_form = ProfileUpdateForm(instance=request.user)
+        user_form = UserUpdateForm(instance=request.user)
 
+        context = {
+            'user_form':user_form,
+            'profile_form': profile_form
 
-@login_required(login_url='/accounts/login/')
-def single_pic(request, img):
-    user = request.user
-    picture = Image.get_img_by_id(img)
-    comments = Comments.get_by_image(img)
+        }
+
+    return render(request, 'profile.html', context)
+
+def update_profile(request):
     if request.method == 'POST':
-        comment_form = CommentForm(request.POST)
-        if comment_form.is_valid():
-            comment = comment_form.save(commit=False)
-            comment.user = user
-            comment.image = picture
-            comment.save()
-            return redirect('picture', picture.id)
-    else:
-        comment_form = CommentForm()
 
-    return render(request, 'picture.html', {'comment_form': comment_form, 'pic': picture, 'user': user, 'comments': comments})
+        user_form = UserUpdateForm(request.POST, instance=request.user)
+        profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user)
+
+        if user_form.is_valid():
+            user_form.save()
+            profile_form.save()
+
+            return redirect('home')
+
+    else:
+        user_form = UserUpdateForm(instance=request.user)
+        profile_form = ProfileUpdateForm(instance=request.user)
+
+        context = {
+            'user_form': user_form,
+            'profile_form': profile_form
+
+        }
+
+    return render(request, 'update_profile.html', context)
+
+
+
+def register(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            return redirect('home')
+    else:
+        form = SignUpForm()
+    return render(request, 'registration/registration_form.html', {'form': form})
+
+
+def new_post(request):
+    current_user = request.user
+   
+    if request.method == 'POST':
+        form = NewPostForm(request.POST, request.FILES)
+        if form.is_valid():
+            image = form.save(commit=False)
+            image.user = current_user
+           
+            image.save()
+            
+        return redirect('home')
+
+    else:
+        form = NewPostForm()
+    return render(request, 'new_post.html', {"form": form})
+
+
+
+
+
+
+
+
+
+
+        
+

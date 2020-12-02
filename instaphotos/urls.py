@@ -3,12 +3,16 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
+from instaphotos import views as user_views
+
 
 urlpatterns=[
-    path('',views.index,name = 'home'),
-    path('profile',views.profile, name='profile'),
-    path('search_results',views.search_results,name='search_results'),
-    path('picture', views.single_pic, name='picture'),
+    path('',views.home,name = 'home'),
+    path('accounts/register/', views.register, name='register'),
+    path('new_post/', views.new_post,name ='new_post'),
+    path('profile/', user_views.profile,name = 'profile'),
+    path('update_profile/', user_views.update_profile,name = 'update_profile'),
+
 ]
 
 if settings.DEBUG:

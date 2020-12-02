@@ -1,71 +1,38 @@
-{% extends 'base.html'%}
-{% load cloudinary %}
+{% extends 'base.html' %}
 {% load bootstrap4 %}
+{%load crispy_forms_tags%}
 {%block content%}
-<div class="container" id="bod">
-  <img src="{{profile.profile_pic.url}}" alt="{{profile.user.username}}" width="150", height="150", style="border-radius: 50%;">
-  {{user.username}}</br>
-  {{profile.bio}}
-  <a href="/logout">Logout</a>
-  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editProfileModal">
-  Edit profile
-</button>
-  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newPostModal">
-  Upload Image
-</button>
-  <div class="modal fade" id="editProfileModal" tabindex="-1" role="dialog" aria-labelledby="profileLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="profileLabel">Edit {{profile.user.username}}'s profile</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form action="{% url 'profile'%}" method="post" enctype="multipart/form-data">
-          {%csrf_token%}
-          {% bootstrap_form profile_form%}
-          <input type="submit" class="btn btn-success btn-lg" value="Update">
+<div class="col-sm-6 m-auto card>
+    <div class=" content-section container" style="padding-top: 100px;">
+    <div class="media">
+        <div class="col-sm-4">
+            <div style="width: 150px; height:150px; overflow:hidden; border-radius:50%" class="img-wrapper">
+                <img width="120%" height="120%" src="{{user.profile.profile_pic.url }}" alt="profile">
+            </div>
+        </div>
+        <div class="media-body">
+            <h2 class="account-heading">{{user.username}}</h2>
+            <p class="text-secondary">{{user.email}}</p>
+            <p>{{user.profile.bio}}</p>
+
+        </div>
+    </div>
+
+    <div class="container">
+        <form method="POST" enctype="multipart/form-data" >
+            {%csrf_token%}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Profile info</legend>
+                {{ user_form|crispy }}
+                {{ profile_form|crispy }}
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-outline-info" type="submit">update</button>
+            </div>
         </form>
-      </div>
     </div>
-  </div>
+</div>
 </div>
 
-  <div class="modal fade" id="newPostModal" tabindex="-1" role="dialog" aria-labelledby="postLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="postLabel">New post</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form action="{% url 'profile'%}" method="post" enctype="multipart/form-data">
-          {%csrf_token%}
-          {% bootstrap_form upload_form%}
-          <input type="submit" class="btn btn-success btn-lg" value="Post">
-        </form>
-      </div>
-    </div>
-  </div>
 </div>
-
-  <div class="row">
-    {% for pic in pics%}
-    <!--Displaying the pictures-->
-    <div class="card col-xs-4 col-sm-4 col-md-4 col-lg-4">
-      <img class="card-img-top" src="{{pic.image.url}}" alt="Image">
-
-    </div>
-
-    {% empty %}
-    <div class="row">
-      <h2 class="text-center"> No Photos</h2>
-    </div>
-    {% endfor %}
-  </div>
-</div>
-{%endblock%}
+{%endblock content%}
