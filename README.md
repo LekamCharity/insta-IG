@@ -14,6 +14,9 @@ This is a web application for instagram where users can upload photos and follow
 * Copy a link to the photo to share with my friends.  
 * View photos based on the location they were taken.  
 
+## Figma Link
+https://www.figma.com/file/b4YGdVCx0HpRPwHuOOzuum/Untitled?node-id=0%3A1
+
 ## Live Link
 https://instaig.herokuapp.com/ 
   
